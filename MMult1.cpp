@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <math.h>
 #include <string>
-// #include <omp.h>
+#include <omp.h>
 #include "utils.h"
 
 // #define BLOCK_SIZE 2
