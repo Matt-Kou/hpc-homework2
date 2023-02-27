@@ -33,6 +33,7 @@ void MMult0(long m, long n, long k, double *a, double *b, double *c)
 void MMult1(long m, long n, long k, double *a, double *b, double *c)
 {
   // TODO: See instructions below
+  #pragma omp parallel for
   for (long row = 0; row < m; row += BLOCK_SIZE)
   {
     for (long col = 0; col < n; col += BLOCK_SIZE)
@@ -45,7 +46,7 @@ void MMult1(long m, long n, long k, double *a, double *b, double *c)
           for (long sub_col = col; sub_col < col + BLOCK_SIZE; sub_col++)
           {
             double sum = 0;
-            #pragma omp parallel for reduction(+: sum)
+            // #pragma omp parallel for reduction(+: sum)
             for (long ii = i; ii < i + BLOCK_SIZE; ii++)
             {
               sum += a[sub_row + m * ii] * b[ii + m * sub_col];
