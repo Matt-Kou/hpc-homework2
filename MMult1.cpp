@@ -2,10 +2,12 @@
 
 #include <stdio.h>
 #include <math.h>
-#include <omp.h>
+#include <string>
+// #include <omp.h>
 #include "utils.h"
 
-#define BLOCK_SIZE 2
+// #define BLOCK_SIZE 2
+int BLOCK_SIZE;
 
 // Note: matrices are stored in column major order; i.e. the array elements in
 // the (m x n) matrix C are stored in the sequence: {C_00, C_10, ..., C_m0,
@@ -57,6 +59,7 @@ void MMult1(long m, long n, long k, double *a, double *b, double *c)
 
 int main(int argc, char **argv)
 {
+  BLOCK_SIZE = std::stoi(argv[1]);
   const long PFIRST = BLOCK_SIZE;
   const long PLAST = 2000;
   const long PINC = std::max(50 / BLOCK_SIZE, 1) * BLOCK_SIZE; // multiple of BLOCK_SIZE
