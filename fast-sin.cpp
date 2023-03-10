@@ -55,13 +55,13 @@ void sin4_intrin(double *sinx, const double *x)
   // The definition of intrinsic functions can be found at:
   // https://software.intel.com/sites/landingpage/IntrinsicsGuide/#
 #if defined(__AVX__)
-  printf("Using AVX\n");
+  // printf("Using AVX\n");
   __m256d x1, x2, x3, x5, x7, x9, x11;
   x1 = _mm256_load_pd(x);
   x2 = _mm256_mul_pd(x1, x1);
   x3 = _mm256_mul_pd(x1, x2);
   x5 = _mm256_mul_pd(x2, x3);
-  x7 = _mm256_mul_pd(x2, x3);
+  x7 = _mm256_mul_pd(x2, x5);
   x9 = _mm256_mul_pd(x2, x7);
   x11 = _mm256_mul_pd(x2, x9);
 
@@ -69,11 +69,13 @@ void sin4_intrin(double *sinx, const double *x)
   // s = _mm256_add_pd(s, _mm256_mul_pd(x3 , _mm256_set1_pd(c3 )));
   __m256d a3, a5, a7, a9, a11;
   a3 = _mm256_mul_pd(_mm256_set1_pd(c3), x3);
+  a5 = _mm256_mul_pd(_mm256_set1_pd(c5), x5);
   a7 = _mm256_mul_pd(_mm256_set1_pd(c7), x7);
   a9 = _mm256_mul_pd(_mm256_set1_pd(c9), x9);
   a11 = _mm256_mul_pd(_mm256_set1_pd(c11), x11);
   _mm256_store_pd(sinx, _mm256_add_pd(_mm256_add_pd(_mm256_add_pd(_mm256_add_pd(_mm256_add_pd(x1, a3), a5), a7), a9), a11));
 #elif defined(__SSE2__)
+  printf("Using SSE2\n");
   constexpr int sse_length = 2;
   for (int i = 0; i < 4; i += sse_length)
   {
@@ -87,6 +89,7 @@ void sin4_intrin(double *sinx, const double *x)
     _mm_store_pd(sinx + i, s);
   }
 #else
+  printf("Using reference\n");
   sin4_reference(sinx, x);
 #endif
 }
