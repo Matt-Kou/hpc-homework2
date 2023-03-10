@@ -111,4 +111,286 @@ block size = 64:
       1920  18.683854   0.352807   0.000001 2.842171e-12
       1984  18.465456   0.393881   0.000001 2.955858e-12
 ```
-As a result, there is approximatly a 4 times speedup by changing the block size = 16 or 64
+As a result, there is approximatly a 4 times speedup by changing the block size = 16 or 64.
+
+When using opemMP with block size = 16:
+```
+        16  48.637114   0.019148   0.000112 4.541851e-05
+        64   1.569985   0.593252   0.000869 9.545329e-08
+       112   0.394975   2.358653   0.001974 8.956704e-09
+       160   0.282826   3.304513   0.001936 1.671651e-09
+       208   0.341091   2.751930   0.001240 6.266418e-10
+       256   0.339316   2.762910   0.001012 2.660272e-10
+       304   0.132551   7.106245   0.002191 1.086846e-10
+       352   0.152707   6.117844   0.001629 6.207301e-11
+       400   0.107606   8.862640   0.002077 4.047251e-11
+       448   0.120104   8.366803   0.001751 2.296474e-11
+       496   0.100838  10.142950   0.001917 1.386979e-11
+       544   0.107585   9.755313   0.001681 1.250555e-11
+       592   0.076558  12.619561   0.001998 6.707523e-12
+       640   0.094836  10.297351   0.001508 4.547474e-12
+       688   0.082028  14.789769   0.002015 5.229595e-12
+       736   0.068636  16.229529   0.002067 4.092726e-12
+       784   0.079838  16.863976   0.002017 3.979039e-12
+       832   0.068375  15.689272   0.001768 2.216893e-12
+       880   0.071092  17.854915   0.001902 2.330580e-12
+       928   0.076045  19.575062   0.001978 2.671641e-12
+       976   0.092329  18.756127   0.001802 2.501110e-12
+      1024   0.227419   4.397164   0.000403 1.080025e-12
+      1072   0.087870  13.056981   0.001142 1.193712e-12
+      1120   0.097694  13.393327   0.001121 1.364242e-12
+      1168   0.105453  14.072420   0.001130 1.421085e-12
+      1216   0.166891  10.033857   0.000774 1.705303e-12
+      1264   0.128428  14.644722   0.001086 1.648459e-12
+      1312   0.146765  14.331118   0.001024 1.762146e-12
+      1360   0.178992  13.088292   0.000902 1.818989e-12
+      1408   0.268586   9.678866   0.000644 2.046363e-12
+      1456   0.169896  16.920030   0.001089 2.273737e-12
+      1504   0.236848  13.377446   0.000834 2.103206e-12
+      1552   0.259600  13.411294   0.000810 2.273737e-12
+      1600   0.315690  12.083663   0.000708 2.330580e-12
+      1648   0.283075  14.725532   0.000838 2.330580e-12
+      1696   0.303706  14.959738   0.000827 2.614797e-12
+      1744   0.369045  13.386290   0.000720 2.557954e-12
+      1792   0.857809   6.247747   0.000327 2.557954e-12
+      1840   0.462634  12.540537   0.000639 3.012701e-12
+      1888   0.425372  14.734550   0.000732 2.785328e-12
+      1936   0.422568  15.992637   0.000774 2.842171e-12
+      1984   0.620912  11.713732   0.000554 2.785328e-12
+```
+As a result, there is a approximatly 22.8 times speed up.
+
+The tests were run on `crunchy1.cims.nyu.edu`.
+
+## Fast Sin
+
+I implemented using AVX. Here is the command to run:
+
+```g++ -mavx fast-sin.cpp -O3; ./a.out``` 
+
+Here is the result:
+
+```
+Reference time: 0.0050
+Taylor time:    0.4570      Error: 6.928125e-12
+Intrin time:    0.0021      Error: 6.928125e-12
+Vector time:    0.0019      Error: 2.454130e-03
+```
+
+## Inner Product Optimization
+Here is the testing result:
+```
+n:256
+standard dot product with no optimization:
+        time used: 1.64e-07     flops: 0.0908607        sum: 3.03155e+20
+dot product with 2 loop unrolling:
+        time used: 1.36e-07     flops: 0.109567 sum: 3.04151e+20
+dot product with 2 loop unrolling and indexing optimization:
+        time used: 1.44e-07     flops: 0.10348  sum: 3.04151e+20
+dot product with 2 loop unrolling, indexing optimization, and disentangling:
+        time used: 1.23e-07     flops: 0.121148 sum: 3.04151e+20
+dot product with 2 loop unrolling, indexing optimization, and disentangling (2):
+        time used: 1.38e-07     flops: 0.107979 sum: 3.04151e+20
+dot product with 4 loop unrolling:
+        time used: 1.2e-07      flops: 0.124176 sum: 3.04151e+20
+dot product with 4 loop unrolling and indexing optimization:
+        time used: 1.01e-07     flops: 0.147536 sum: 3.04151e+20
+dot product with 4 loop unrolling, indexing optimization, and disentangling:
+        time used: 1.08e-07     flops: 0.137974 sum: 3.04151e+20
+dot product with 4 loop unrolling, indexing optimization, and disentangling (2):
+        time used: 2.03e-07     flops: 0.0734047        sum: 3.04151e+20
+n:1024
+standard dot product with no optimization:
+        time used: 5.17e-07     flops: 0.0288224        sum: 1.1973e+21
+dot product with 2 loop unrolling:
+        time used: 2.6e-07      flops: 0.0573122        sum: 1.19782e+21
+dot product with 2 loop unrolling and indexing optimization:
+        time used: 2.92e-07     flops: 0.0510314        sum: 1.19782e+21
+dot product with 2 loop unrolling, indexing optimization, and disentangling:
+        time used: 2.57e-07     flops: 0.0579812        sum: 1.19782e+21
+dot product with 2 loop unrolling, indexing optimization, and disentangling (2):
+        time used: 2.72e-07     flops: 0.0547837        sum: 1.19782e+21
+dot product with 4 loop unrolling:
+        time used: 1.65e-07     flops: 0.0903101        sum: 1.19782e+21
+dot product with 4 loop unrolling and indexing optimization:
+        time used: 1.53e-07     flops: 0.0973932        sum: 1.19782e+21
+dot product with 4 loop unrolling, indexing optimization, and disentangling:
+        time used: 2.09e-07     flops: 0.0712974        sum: 1.19782e+21
+dot product with 4 loop unrolling, indexing optimization, and disentangling (2):
+        time used: 1.651e-06    flops: 0.00902554       sum: 1.19782e+21
+n:4096
+standard dot product with no optimization:
+        time used: 2.116e-06    flops: 0.00704214       sum: 4.6228e+21
+dot product with 2 loop unrolling:
+        time used: 9.82e-07     flops: 0.0151743        sum: 4.62339e+21
+dot product with 2 loop unrolling and indexing optimization:
+        time used: 9.8e-07      flops: 0.0152053        sum: 4.62339e+21
+dot product with 2 loop unrolling, indexing optimization, and disentangling:
+        time used: 9.87e-07     flops: 0.0150974        sum: 4.62339e+21
+dot product with 2 loop unrolling, indexing optimization, and disentangling (2):
+        time used: 1.353e-06    flops: 0.0110134        sum: 4.62339e+21
+dot product with 4 loop unrolling:
+        time used: 7.57e-07     flops: 0.0196845        sum: 4.62339e+21
+dot product with 4 loop unrolling and indexing optimization:
+        time used: 7.04e-07     flops: 0.0211664        sum: 4.62339e+21
+dot product with 4 loop unrolling, indexing optimization, and disentangling:
+        time used: 7.66e-07     flops: 0.0194532        sum: 4.62339e+21
+dot product with 4 loop unrolling, indexing optimization, and disentangling (2):
+        time used: 6.256e-06    flops: 0.0023819        sum: 4.62339e+21
+```
+There is a clear speed up using the unrolling but the effect of indexing optimization and disentangling is very minor and sometimes even decreasing the performance by a lot (as in the last case: dot product with 4 loop unrolling, indexing optimization, and disentangling (2)).
+## Lecture 4
+### Computational Latency
+Command:
+```
+g++ -std=c++11 -O3 -march=native compute.cpp -ftree-vectorize -fopt-info-vec-optimized && ./a.out -n 1000000000
+```
+#### multi-add
+```
+0.866954 seconds
+2.861093 cycles/eval
+2.306808 Gflop/s
+```
+#### division
+```
+3.180167 seconds
+10.494766 cycles/eval
+0.628885 Gflop/s
+```
+#### sqrt
+```
+2.959341 seconds
+9.765968 cycles/eval
+0.675816 Gflop/s
+```
+#### sin
+```
+7.224877 seconds
+23.842221 cycles/eval
+0.276820 Gflop/s
+```
+I am an Alderlake CPU so my latency is expected to be 4 with Throughput 0.5. Since my actual thoughput is 2.3 Gflops, I get higher results.
+
+### Compute Vec
+Command:
+```
+g++ -fopenmp -std=c++11 -O3 -march=native compute-vec.cpp && ./a.out -n 1000000000
+```
+Result:
+```
+time = 0.890786
+flop-rate = 8.980125 Gflop/s
+
+time = 0.913937
+flop-rate = 8.753032 Gflop/s
+
+time = 0.906623
+flop-rate = 8.823660 Gflop/s
+```
+Command:
+```
+g++ -std=c++11 -O3 -march=native compute-vec.cpp -ftree-vectorize -fopt-info-vec-optimized && ./a.out -n 1000000000
+```
+Result:
+```
+compute-vec.cpp:16:21: optimized: loop vectorized using 32 byte vectors
+compute-vec.cpp:16:21: optimized:  loop versioned for vectorization because of possible aliasing
+compute-vec.cpp:52:21: optimized: loop vectorized using 16 byte vectors
+compute-vec.cpp:46:5: optimized: basic block part vectorized using 32 byte vectors
+time = 0.928199
+flop-rate = 8.617982 Gflop/s
+
+time = 0.897538
+flop-rate = 8.912999 Gflop/s
+
+time = 0.877357
+flop-rate = 9.118084 Gflop/s
+```
+The vectorization doesn't seem to be accelerating anything, neither AVX does. 
+### compute vec pipe
+#### M=1
+Command:
+```
+g++ -fopenmp -std=c++11 -O3 -march=native compute-vec-pipe.cpp && ./a.out -n 1000000000
+```
+Result:
+```
+time = 0.852463
+flop-rate = 9.384056 Gflop/s
+
+time = 1.011725
+flop-rate = 7.906868 Gflop/s
+
+time = 0.861244
+flop-rate = 9.288562 Gflop/s
+```
+Command:
+```
+ g++ -mavx -std=c++11 -O3 -march=native compute-vec-pipe.cpp -ftree-vectorize -fopt-info-vec-optimized && ./a.out -n
+ 1000000000
+ ```
+Result:
+```
+compute-vec-pipe.cpp:17:21: optimized: loop vectorized using 32 byte vectors
+compute-vec-pipe.cpp:17:21: optimized:  loop versioned for vectorization because of possible aliasing
+compute-vec-pipe.cpp:67:21: optimized: loop vectorized using 16 byte vectors
+compute-vec-pipe.cpp:61:5: optimized: basic block part vectorized using 32 byte vectors
+time = 0.885702
+flop-rate = 9.031911 Gflop/s
+
+time = 0.886310
+flop-rate = 9.025914 Gflop/s
+
+time = 0.867027
+flop-rate = 9.226648 Gflop/s
+```
+#### M=2
+```
+compute-vec-pipe.cpp:17:21: optimized: loop vectorized using 32 byte vectors
+compute-vec-pipe.cpp:17:21: optimized:  loop versioned for vectorization because of possible aliasing
+compute-vec-pipe.cpp:89:21: optimized: loop vectorized using 32 byte vectors
+compute-vec-pipe.cpp:67:21: optimized: loop vectorized using 32 byte vectors
+compute-vec-pipe.cpp:61:5: optimized: basic block part vectorized using 32 byte vectors
+time = 0.854430
+flop-rate = 18.724961 Gflop/s
+
+time = 0.907059
+flop-rate = 17.638803 Gflop/s
+
+time = 0.969341
+flop-rate = 16.505311 Gflop/s
+```
+#### M=4
+```
+time = 1.108348
+flop-rate = 28.870410 Gflop/s
+
+time = 1.129929
+flop-rate = 28.319644 Gflop/s
+
+time = 1.098858
+flop-rate = 29.120364 Gflop/s
+```
+#### M=16
+```
+time = 1.753042
+flop-rate = 73.014258 Gflop/s
+
+time = 2.953269
+flop-rate = 43.341470 Gflop/s
+
+time = 2.818227
+flop-rate = 45.418126 Gflop/s
+```
+#### M=64
+```
+time = 15.618474
+flop-rate = 32.781536 Gflop/s
+
+time = 15.260075
+flop-rate = 33.551502 Gflop/s
+
+time = 16.305043
+flop-rate = 31.401235 Gflop/s
+```
+Indeed, the observation follows the theoretical performance.
